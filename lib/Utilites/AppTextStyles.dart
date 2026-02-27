@@ -10,6 +10,8 @@ abstract final class AppTextStyles{
   static const TextStyle whiteHeader700mediam24=TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: AppColors.white);
   static const TextStyle whiteHeader700mediam20=TextStyle(fontSize: 20, fontWeight: FontWeight.w700, color: AppColors.white);
   static const TextStyle whitesubHeader400mediam20=TextStyle(fontSize: 20, fontWeight: FontWeight.w400, color: AppColors.white);
+  static const TextStyle whitesubHeader400mediam14=TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: AppColors.white);
+
   static const TextStyle whitesubHeader400mediam16=TextStyle(fontSize: 16, fontWeight: FontWeight.w400, color: AppColors.white);
 
 

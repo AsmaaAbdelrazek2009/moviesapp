@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:moviesapp/Utilites/AppAssets.dart';
 
-import '../Utilites/AppColors.dart';
-import 'onBoardingScreen.dart';
+import '../../Utilites/AppColors.dart';
+import '../onBording/onBoardingScreen.dart';
 
 class Splashscreen extends StatefulWidget {
   const Splashscreen({super.key});

@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 
-import 'Screens/SplashScreen.dart';
+import 'Navigations/BottomNavBar.dart';
+import 'Screens/Login/LoginScreen.dart';
+import 'Screens/Signup/SignupScreen.dart';
+import 'Screens/Splash/SplashScreen.dart';
+import 'Screens/onBording/onBoardingScreen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,7 +16,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-     home:Splashscreen(),
+     home:BottomNavBar(),
     );
   }
 }
