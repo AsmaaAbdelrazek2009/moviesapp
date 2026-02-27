@@ -18,7 +18,7 @@ class AppButton extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: ElevatedButton(onPressed: onPressed,
-        child: Text(text,style: TextColor==AppColors.yellow? AppTextStyles.yellowText600mediam20: AppTextStyles.blackText600mediam20,),
+        child: Text(text,style: TextColor==AppColors.yellow? AppTextStyles.yellowText600mediam20: AppTextStyles.whiteHeader700mediam20,),
       style: ElevatedButton.styleFrom(
         backgroundColor: color1 ,
         shape: RoundedRectangleBorder(

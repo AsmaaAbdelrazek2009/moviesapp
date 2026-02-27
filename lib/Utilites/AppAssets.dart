@@ -13,6 +13,10 @@ abstract final class AppAssets{
   static const String SearchIcon="assets/images/Vector (1).png";
   static const String ProfileIcon="assets/images/Profiel.png";
   static const String ExploreIcon="assets/images/explore.png";
+  static const String watchNow="assets/images/Watch Now.png";
+  static const String AvailableNow="assets/images/Available Now.png";
+  static const String Play="assets/images/Group 21.png";
+
 
 
 }

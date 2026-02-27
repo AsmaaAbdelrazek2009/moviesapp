@@ -4,21 +4,24 @@ import 'package:moviesapp/Utilites/AppColors.dart';
 import 'package:moviesapp/Utilites/AppTextStyles.dart';
 
 import '../Models/AppConstans/AppConstans.dart';
+import '../Models/MoviesList/MoviesList.dart';
 
 class Cards extends StatelessWidget {
-   Cards({super.key, required this.availableNow});
+   Cards({super.key,required,required this.movie,required this.heigh, required  this.width });
 
-  final AvailableNow availableNow;
+    final double heigh;
+    final double width;
+   final Movie movie;
 
 
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 234,
-      height: 351,
+      width: width,
+      height: heigh,
       decoration: BoxDecoration(
-       image: DecorationImage(image: AssetImage(availableNow.imgPath),fit: BoxFit.cover),
+       image: DecorationImage(image: NetworkImage(movie.mediumCoverImage??""),fit: BoxFit.cover),
         borderRadius: BorderRadius.circular(20),
       ),
       child:
@@ -39,7 +42,7 @@ class Cards extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(availableNow.rate,style: AppTextStyles.whitesubHeader400mediam16,),
+                    Text(movie.rating.toString(),style: AppTextStyles.whitesubHeader400mediam16,),
                     SizedBox(width: 4,),
                     Icon(Icons.star,color: AppColors.yellow,size: 20,)
                   ],
