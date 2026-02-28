@@ -82,26 +82,24 @@ class HomePage extends StatelessWidget {
   Widget buildAvailableNowList(BuildContext context, List <Movie> movie) {
     return Padding(
       padding: const EdgeInsets.only(top: 20.0),
-      child: InkWell(
-        onTap: ()
-        {
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>FilmDetails()));
-
-        },
-        child: CarouselSlider(items: movie.map((index)=>Cards(movie: index , width: 234, heigh: 351,)).toList(), options: CarouselOptions(
-          height: MediaQuery.of(context).size.height * 0.38,
-          aspectRatio: 16 / 9,
-          viewportFraction: 0.5,
-          initialPage:0,
-          enableInfiniteScroll: true,
-          autoPlayInterval: Duration(seconds: 3),
-          autoPlayAnimationDuration: Duration(milliseconds: 800),
-          autoPlayCurve: Curves.fastOutSlowIn,
-          enlargeCenterPage: true,
-          enlargeFactor: 0.2,
-          scrollDirection: Axis.horizontal,
-        ),),
-      ),
+      child: CarouselSlider(
+        items: movie.map((movieItem)=>InkWell(
+              onTap: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>FilmDetails(movieId: movieItem.id!, allmovies: movie,)));
+              },
+            child: Cards(movie: movieItem , width: 234, heigh: 351,))).toList(), options: CarouselOptions(
+        height: MediaQuery.of(context).size.height * 0.38,
+        aspectRatio: 16 / 9,
+        viewportFraction: 0.5,
+        initialPage:0,
+        enableInfiniteScroll: true,
+        autoPlayInterval: Duration(seconds: 3),
+        autoPlayAnimationDuration: Duration(milliseconds: 800),
+        autoPlayCurve: Curves.fastOutSlowIn,
+        enlargeCenterPage: true,
+        enlargeFactor: 0.2,
+        scrollDirection: Axis.horizontal,
+      ),),
     );
   }
    buildWatchNowList(BuildContext context,List <Movie> latestmovies) {

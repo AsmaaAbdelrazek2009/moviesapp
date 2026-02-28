@@ -16,6 +16,7 @@ abstract final class AppAssets{
   static const String watchNow="assets/images/Watch Now.png";
   static const String AvailableNow="assets/images/Available Now.png";
   static const String Play="assets/images/Group 21.png";
+  static const String popCorn="assets/images/Empty 1.png";
 
 
 

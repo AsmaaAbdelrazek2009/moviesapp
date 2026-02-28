@@ -37,6 +37,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
         borderRadius: BorderRadiusGeometry.circular(16),
         child: BottomNavigationBar(
+
           type: BottomNavigationBarType.fixed,
             currentIndex: SelectedIndex,
             onTap: (newIndex){
