@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:moviesapp/Utilites/AppAssets.dart';
 
+import '../../API Manager/APIManager.dart';
+import '../../Models/MoviesList/MoviesList.dart';
 import '../../Utilites/AppColors.dart';
 import 'ExplorePage/ExplorePage.dart';
 import 'HomePage/HomePage.dart';
@@ -17,10 +19,30 @@ class BottomNavBar extends StatefulWidget {
 class _BottomNavBarState extends State<BottomNavBar> {
   var SelectedIndex=0;
 
-  var pages=[HomePage(),SearchPage(),ProfilePage(),ExplorePage(),];
+
+
+  @override
+  void initState() {
+    super.initState();
+    _loadData();
+  }
+  List<Movie> getMovies = [];
+
+  void _loadData() async {
+    try {
+      var data = await Apimanager.getMovies();
+      setState(() {
+        getMovies = data;
+      });
+    } catch (e) {
+      print("Error loading movies: $e");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> pages=[HomePage(),SearchPage( allmovies: getMovies,),ProfilePage(),ExplorePage(),];
+
     return Scaffold(
       backgroundColor: AppColors.black,
       body: pages[SelectedIndex],

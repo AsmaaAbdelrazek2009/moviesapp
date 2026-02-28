@@ -4,6 +4,7 @@ import 'Screens/FilmDetails/FileDetails.dart';
 import 'Screens/Login/LoginScreen.dart';
 import 'Screens/Navigations/BottomNavBar.dart';
 import 'Screens/Navigations/HomePage/HomePage.dart';
+import 'Screens/Navigations/SearchPage/SearchPage.dart';
 import 'Screens/Signup/SignupScreen.dart';
 import 'Screens/Splash/SplashScreen.dart';
 import 'Screens/onBording/onBoardingScreen.dart';
