@@ -57,7 +57,7 @@ class HomePage extends StatelessWidget {
                          InkWell(
                              onTap: ()
                              {
-                               Navigator.push(context, MaterialPageRoute(builder: (context)=>ExplorePage()));
+                               Navigator.push(context, MaterialPageRoute(builder: (context)=>ExplorePage( allmovies: movies,)));
                              },
                              child: Text("See more", style: AppTextStyles.yellowText400mediam16,)),
                        ],

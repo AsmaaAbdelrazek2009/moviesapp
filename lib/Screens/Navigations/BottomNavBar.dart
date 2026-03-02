@@ -41,7 +41,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages=[HomePage(),SearchPage( allmovies: getMovies,),ProfilePage(),ExplorePage(),];
+    final List<Widget> pages=[HomePage(),SearchPage( allmovies: getMovies,),ProfilePage(),ExplorePage( allmovies: getMovies,),];
 
     return Scaffold(
       backgroundColor: AppColors.black,
@@ -50,57 +50,46 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
     );
   }
-
- Widget buildBottomNavBar() {
+  Widget buildBottomNavBar() {
     return Container(
-      // height: 75,
-      margin: EdgeInsets.all(14),
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 30), // زيادة الـ vertical margin لرفعه للأعلى
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.3),
+            blurRadius: 10,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
       child: ClipRRect(
-
-        borderRadius: BorderRadiusGeometry.circular(16),
-        child: BottomNavigationBar(
-
-          type: BottomNavigationBarType.fixed,
+        borderRadius: BorderRadius.circular(16),
+        child: SizedBox(
+          height: 60,
+          child: BottomNavigationBar(
+            type: BottomNavigationBarType.fixed,
             currentIndex: SelectedIndex,
-            onTap: (newIndex){
-            setState(() {
-              SelectedIndex=newIndex;
-
-            });
+            onTap: (newIndex) {
+              setState(() {
+                SelectedIndex = newIndex;
+              });
             },
             backgroundColor: AppColors.Grey,
             selectedItemColor: AppColors.yellow,
             unselectedItemColor: AppColors.white,
-            iconSize: 25,
-          showSelectedLabels: false,
-          showUnselectedLabels: false,
-            items:
-        [
-          BottomNavigationBarItem(
-              icon: Icon(Icons.home_outlined),
-            label: "",
-
+            iconSize: 22,
+            showSelectedLabels: false,
+            showUnselectedLabels: false,
+            selectedFontSize: 0,
+            unselectedFontSize: 0,
+            items: const [
+              BottomNavigationBarItem(icon: Icon(Icons.home_outlined), label: ""),
+              BottomNavigationBarItem(icon: Icon(Icons.search_outlined), label: ""),
+              BottomNavigationBarItem(icon: Icon(Icons.person_outline), label: ""),
+              BottomNavigationBarItem(icon: Icon(Icons.explore_outlined), label: ""),
+            ],
           ),
-
-          BottomNavigationBarItem(
-              icon: Icon(Icons.search_outlined),
-            label: "",
-
-          ),
-
-          BottomNavigationBarItem(
-              icon: Icon(Icons.person_outline),
-            label: "",
-
-          ),
-
-          BottomNavigationBarItem(
-              icon: Icon(Icons.explore_outlined),
-            label: "",
-
-          ),
-        ],
-
         ),
       ),
     );

@@ -9,6 +9,7 @@ import '../../Utilites/AppColors.dart';
 import '../../Widgets/Button.dart';
 import '../../Widgets/Card.dart';
 import '../Navigations/BottomNavBar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class FilmDetails extends StatelessWidget {
   const FilmDetails({super.key, required this.movieId, required this.allmovies});
@@ -68,10 +69,40 @@ class FilmDetails extends StatelessWidget {
                             {
                               Navigator.push(context, MaterialPageRoute(builder: (context)=>BottomNavBar()));
                             },
-                            child: Icon(Icons.arrow_back, color: AppColors.white,size: 20, )),
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 16),
+                              child: Row(
+                                children: [
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 16),
+                                    child: Icon(Icons.arrow_back, color: AppColors.white,size: 30, ),
+                                  ),
+                                  Spacer(),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 16),
+                                    child: Icon(Icons.bookmark, color: AppColors.white,size: 30, ),
+                                  ),
+                                ],
+                              ),
+                            )),
                       ],
                     ),
-                    AppButton(text: "Watch",onPressed: (){},color1: AppColors.red, color2: AppColors.red, TextColor: AppColors.white,),
+                    AppButton(text: "Watch",
+                      onPressed: ()async{
+                      if(moviesdetails.url!=null)
+                        {
+                          final Uri url=Uri.parse(moviesdetails.url);
+                          if(await canLaunchUrl(url))
+                            {
+                              await launchUrl(url);
+                            }
+                          else
+                            {
+                              throw "Could not launch $url";
+
+                            }
+                        }
+                      },color1: AppColors.red, color2: AppColors.red, TextColor: AppColors.white,),
                     SizedBox(height: 10,),
                       Row(
                         children: [
