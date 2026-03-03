@@ -1,70 +1,50 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviesapp/API%20Manager/APIManager.dart';
+import 'package:moviesapp/Cupit/Cupit.dart';
+import 'package:moviesapp/Cupit/States.dart';
 import 'package:moviesapp/Utilites/AppColors.dart';
 import 'package:moviesapp/Utilites/AppTextStyles.dart';
 import 'package:moviesapp/Widgets/Card.dart';
 
 import '../../../Models/MoviesList/MoviesList.dart';
 
-class ExplorePage extends StatefulWidget {
-   ExplorePage({super.key, required this.allmovies});
-
-
-
-  List <Movie> allmovies;
-  @override
-  State<ExplorePage> createState() => _ExplorePageState();
-}
-
-class _ExplorePageState extends State<ExplorePage> {
-
-  var _currentIndex=0;
-
-  List <Movie> filterdMovies=[];
+class ExplorePage extends StatelessWidget {
+   ExplorePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.black,
-      body: SafeArea(
-       child: FutureBuilder(future: Apimanager.getMovies(), builder: (context,snapshot){
-
-         if(snapshot.hasError)
-           {
-             return Text("Error");
-           }
-         else if (snapshot.hasData)
-           {
-             List <Movie> movies=snapshot.data!;
-             List<String> allGenres = movies
-                 .expand((movie) => movie.genres ?? <String>[])
-                 .toSet()
-                 .toList();
-             filterdMovies = movies.where((movie) =>
-             movie.genres?.contains(allGenres[_currentIndex]) ?? false).toList();
-             return Column(
-               children: [
-                 buildTabBar(allGenres),
-                 Expanded(
-                   child: buildFilteredMoviesList(filterdMovies),
-                 ),
-
-
-
-               ],
-             );
-           }
-         else
-           {
-             return CircularProgressIndicator();
-           }
-       })),
-
-
-    );
+    return BlocProvider(create: (context)=> MovieCubit()..GetExploreMoviesFilter(),
+    child: BlocConsumer<MovieCubit,States>(
+      listener: (context,state){},
+      builder: (context,state){
+        var cubit = MovieCubit.get(context);
+        return Scaffold(
+          backgroundColor: AppColors.black,
+          body: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                IconButton(icon: Icon(
+                  Icons.arrow_back, size: 30,
+                  color: AppColors.white,),
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                ),
+                buildTabBar(cubit.allGenres,context),
+                Expanded(
+                  child: buildFilteredMoviesList(cubit.filterdMovies),
+                ),
+              ],
+            ),
+          ),
+        );
+      }
+    ),);
   }
 
-  Widget buildTabBar(List <String> genres) {
+  Widget buildTabBar(List <String> genres,BuildContext context) {
 return
   DefaultTabController(
       length: genres.length,
@@ -79,16 +59,13 @@ return
       dividerColor: Colors.transparent,
       padding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       onTap: (index){
-        setState(() {
-          _currentIndex = index;
-          filterdMovies = widget.allmovies.where((movie) => movie.genres!.contains(genres[index])).toList();
-          buildFilteredMoviesList(filterdMovies);
-        });
+        MovieCubit.get(context).changeExploreTab( index);
+
 
       },
-      tabs: List.generate(genres.length,
+      tabs: List.generate(MovieCubit.get(context).allGenres.length,
               (index){
-        bool isSelected = _currentIndex == index;
+        bool isSelected =  MovieCubit.get(context).currentIndex == index;
         return Container(
           width: 132,
           height: 48,
