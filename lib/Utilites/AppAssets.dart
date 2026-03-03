@@ -9,6 +9,15 @@ abstract final class AppAssets{
   static const String gamer1="assets/images/gamer (1).png";
   static const String gamer2="assets/images/gamer (1) (1).png";
   static const String gamer3="assets/images/gamer (1) (2).png";
+  static const String gamer4="assets/images/gamer (1)-1.png";
+  static const String gamer5="assets/images/gamer (1)-2.png";
+  static const String gamer6="assets/images/gamer (1) (2).png";
+  static const String gamer7="assets/images/gamer (1)-3.png";
+  static const String gamer8="assets/images/gamer (1)-4.png";
+  static const String gamer9="assets/images/gamer (1)-5.png";
+  static const String gamer10="assets/images/gamer (1)-7.png";
+  static const String gamer11="assets/images/Group 20.png";
+  static const String gamer12="assets/images/Group 21.png";
   static const String HomeIcon="assets/images/Vector.png";
   static const String SearchIcon="assets/images/Vector (1).png";
   static const String ProfileIcon="assets/images/Profiel.png";

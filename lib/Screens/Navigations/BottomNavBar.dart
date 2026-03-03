@@ -41,7 +41,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages=[HomePage(),SearchPage( allmovies: getMovies,),ProfilePage(),ExplorePage( allmovies: getMovies,),];
+    final List<Widget> pages=[HomePage(),SearchPage( allmovies: getMovies,),ProfilePage(),ExplorePage(),];
 
     return Scaffold(
       backgroundColor: AppColors.black,
@@ -52,7 +52,7 @@ class _BottomNavBarState extends State<BottomNavBar> {
   }
   Widget buildBottomNavBar() {
     return Container(
-      margin: const EdgeInsets.fromLTRB(16, 0, 16, 30), // زيادة الـ vertical margin لرفعه للأعلى
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 30),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
