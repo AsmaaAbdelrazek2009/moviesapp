@@ -4,7 +4,7 @@ import 'package:moviesapp/Utilites/AppTextStyles.dart';
 import '../../AppConstants/AppConstants.dart';
 import '../../Utilites/AppColors.dart';
 import '../../Widgets/Button.dart';
-import '../Signup/SignupScreen.dart';
+import '../LoginTypes/Signup/SignupScreen.dart';
 
 class onBoarding extends StatelessWidget {
   const onBoarding({super.key});

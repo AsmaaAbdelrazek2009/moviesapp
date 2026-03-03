@@ -1,3 +1,5 @@
+import 'package:flutter/cupertino.dart';
+
 import '../Models/MovieDetails/MovieDetailsList.dart';
 import '../Models/MoviesList/MoviesList.dart';
 
@@ -56,5 +58,9 @@ class ExploreMovieDetailsErrorState extends States{
 
 
 class ChangeCategoryState extends States{
+
+}
+
+class ForgetPasswordState extends States{
 
 }

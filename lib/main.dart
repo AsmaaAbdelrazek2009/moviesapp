@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-
 import 'Screens/EditProfile/EditProfile.dart';
 import 'Screens/FilmDetails/FileDetails.dart';
-import 'Screens/Login/LoginScreen.dart';
+import 'Screens/LoginTypes/Login/LoginScreen.dart';
+import 'Screens/LoginTypes/Signup/SignupScreen.dart';
+import 'Screens/LoginTypes/forgetPassword/ForgetPassword.dart';
 import 'Screens/Navigations/BottomNavBar.dart';
 import 'Screens/Navigations/ExplorePage/ExplorePage.dart';
 import 'Screens/Navigations/HomePage/HomePage.dart';
 import 'Screens/Navigations/SearchPage/SearchPage.dart';
-import 'Screens/Signup/SignupScreen.dart';
 import 'Screens/Splash/SplashScreen.dart';
 import 'Screens/onBording/onBoardingScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -28,7 +28,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-     home:LoginScreen(),
+     home:SignupScreen(),
     );
   }
 }

@@ -28,6 +28,7 @@ abstract final class AppAssets{
   static const String popCorn="assets/images/Empty 1.png";
   static const String folder="assets/images/Vector.png";
   static const String filter="assets/images/Group 20.png";
+  static const String ForgetPassword="assets/images/Forgot password-bro 1.png";
 
 
 
