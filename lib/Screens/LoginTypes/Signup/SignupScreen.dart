@@ -1,7 +1,9 @@
+import 'package:carousel_slider/carousel_slider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:moviesapp/Utilites/AppAssets.dart';
 import 'package:moviesapp/Utilites/AppTextStyles.dart';
+import '../../../Models/AppConstans/AppConstans.dart';
 import '../../../Models/UserDataModel/useerDM.dart';
 import '../../../Models/UserDataModel/userCollections.dart';
 import '../../../Utilites/AppColors.dart';
@@ -10,15 +12,28 @@ import '../../../Widgets/TextFiled.dart';
 import '../../Navigations/BottomNavBar.dart';
 import '../Login/LoginScreen.dart';
 
-class SignupScreen extends StatelessWidget {
+class SignupScreen extends StatefulWidget {
    SignupScreen({super.key, });
+
+  @override
+  State<SignupScreen> createState() => _SignupScreenState();
+}
+
+class _SignupScreenState extends State<SignupScreen> {
   final EmailController = TextEditingController();
+
   final PasswordController = TextEditingController();
+
   final NameController = TextEditingController();
+
   final PhoneController = TextEditingController();
+   final CarouselSliderController controller = CarouselSliderController();
+  String selectedAvatarPath = AvatarPicker[0];
 
   @override
   Widget build(BuildContext context) {
+
+    final List<String> avatarPicker= AvatarPicker;
     return Scaffold(
       backgroundColor: AppColors.black,
       appBar: AppBar(
@@ -29,15 +44,8 @@ class SignupScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           children: [
-            Row(
-              children: [
-                Image.asset(AppAssets.gamer2),
-                Spacer(),
-                Image.asset(AppAssets.gamer1),
-                Spacer(),
-                Image.asset(AppAssets.gamer3),
-              ],
-            ),
+
+            buildAvatarPicker(avatarPicker, context,controller),
             SizedBox(height: 41,),
             TextField1(lableTitle: "Name",icon1: Icon(Icons.person,color: AppColors.white,),onChanged: (value){ }, controller: NameController,),
             SizedBox(height: 24,),
@@ -92,6 +100,8 @@ class SignupScreen extends StatelessWidget {
                 name: NameController.text,
                 email: EmailController.text,
                 phone: PhoneController.text,
+                imgPath: selectedAvatarPath,
+                // imgPath:
               );
               await MyDatabase.createUserInFirestore(UserDM.currentUser!);
               hideLoading(context);
@@ -114,7 +124,7 @@ class SignupScreen extends StatelessWidget {
                 hideLoading(context);
 
               }
-              buildAlertDialoge(Message, context);
+              buildAlertDialoge(Message,context,EmailController);
             }
             catch (e) {
               print(e);
@@ -138,7 +148,7 @@ class SignupScreen extends StatelessWidget {
 
   }
 
-  void buildAlertDialoge(String message, BuildContext context) {
+  void buildAlertDialoge(String message, BuildContext context, controller) {
 
     showDialog(context: context, builder: (context) => AlertDialog(
       title: Text("Erorr"),
@@ -149,5 +159,39 @@ class SignupScreen extends StatelessWidget {
     ),);
   }
 
+  Widget buildAvatarPicker(List<String> avatarPicker, BuildContext context, CarouselSliderController controller) {
+    return CarouselSlider.builder(
 
+      itemCount: avatarPicker.length,
+      carouselController: controller,
+      itemBuilder: (context, index, realIndex) {
+        return InkWell(
+          onTap: () {
+            controller.animateToPage(
+              index,
+              duration: Duration(milliseconds: 500),
+              curve: Curves.easeInOut,
+            );
+            // selectedAvatar = avatarPicker[index];
+          },
+          child: Image.asset(
+            avatarPicker[index],
+            width: 100,
+          ),
+        );
+      },
+      options: CarouselOptions(
+        onPageChanged: (index, reason) {
+          selectedAvatarPath = avatarPicker[index];
+        },
+        aspectRatio: 16 / 9,
+        viewportFraction: 0.3,
+        initialPage: 0,
+        enableInfiniteScroll: true,
+        enlargeCenterPage: true,
+        enlargeFactor: 0.3,
+        scrollDirection: Axis.horizontal,
+      ),
+    );
+  }
 }
