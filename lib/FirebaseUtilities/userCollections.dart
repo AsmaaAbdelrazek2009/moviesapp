@@ -57,7 +57,6 @@ abstract class MyDatabase {
     }
   }
 
-
   static CollectionReference<Movie2> getHistoryCollection(String userId) {
     return FirebaseFirestore.instance
         .collection("userCollection")
@@ -76,5 +75,34 @@ abstract class MyDatabase {
 
   static Stream<QuerySnapshot<Movie2>> getHistoryStream() {
     return getHistoryCollection(UserDM.currentUser!.id!).snapshots();
+  }
+  static CollectionReference<Movie2> getWatchListCollection(String userId) {
+    return FirebaseFirestore.instance
+        .collection("userCollection")
+        .doc(userId)
+        .collection("WatchListCollection")
+        .withConverter<Movie2>(
+      fromFirestore: (snapshot, _) => Movie2.fromJson(snapshot.data()!),
+      toFirestore: (value, _) => value.toJson(),
+    );
+  }
+
+  static Future<void> addToWatchList(Movie2 movie) async {
+    var collectionRef = getWatchListCollection(UserDM.currentUser!.id!);
+    return collectionRef.doc(movie.id.toString()).set(movie);
+  }
+
+  static Future<void> removeFromWatchList(int movieId) async {
+    var collectionRef = getWatchListCollection(UserDM.currentUser!.id!);
+    return collectionRef.doc(movieId.toString()).delete();
+  }
+
+  static Stream<QuerySnapshot<Movie2>> getWatchListStream() {
+    return getWatchListCollection(UserDM.currentUser!.id!).snapshots();
+  }
+  static Future<void> logout() async {
+    await FirebaseAuth.instance.signOut();
+
+    UserDM.currentUser = null;
   }
 }

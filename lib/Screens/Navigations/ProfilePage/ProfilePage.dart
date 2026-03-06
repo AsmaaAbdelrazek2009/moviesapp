@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:moviesapp/Screens/EditProfile/EditProfile.dart';
+import 'package:moviesapp/Screens/LoginTypes/Login/LoginScreen.dart';
 import 'package:moviesapp/Utilites/AppAssets.dart';
 import 'package:moviesapp/Utilites/AppTextStyles.dart';
 import 'package:moviesapp/Widgets/Button.dart';
@@ -39,20 +40,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   buildActionButtons(context),
                   const SizedBox(height: 16),
 
-                  TabBar(
-                    dividerColor: Colors.transparent,
-                    indicatorSize: TabBarIndicatorSize.tab,
-                    indicator: BoxDecoration(
-                      color: AppColors.yellow,
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    labelColor: AppColors.black,
-                    unselectedLabelColor: Colors.white,
-                    tabs: const [
-                      Tab(icon: Icon(Icons.table_rows_rounded), text: "Watch List"),
-                      Tab(icon: Icon(Icons.folder), text: "History"),
-                    ],
-                  ),
+                  buildTabBar(),
                   const SizedBox(height: 8),
                 ],
               ),
@@ -61,7 +49,7 @@ class _ProfilePageState extends State<ProfilePage> {
             Expanded(
               child: TabBarView(
                 children: [
-                  buildHistoryList(),
+                  buildWatchList(),
                   buildHistoryList(),
                 ],
               ),
@@ -70,6 +58,20 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
     );
+  }
+
+  TabBar buildTabBar() {
+    return TabBar(
+                  dividerColor: Colors.transparent,
+                  indicatorSize: TabBarIndicatorSize.tab,
+                 indicatorColor: AppColors.yellow,
+                  labelColor: AppColors.white,
+                  unselectedLabelColor: AppColors.white,
+                  tabs: const [
+                    Tab(icon: Icon(Icons.table_rows_rounded), text: "Watch List"),
+                    Tab(icon: Icon(Icons.folder), text: "History"),
+                  ],
+                );
   }
 
   Widget buildEmptyListState() {
@@ -130,6 +132,50 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
+
+  Widget buildWatchList() {
+    return StreamBuilder<QuerySnapshot<Movie2>>(
+      stream: MyDatabase.getWatchListStream(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator(color: AppColors.yellow));
+        }
+        var watchListMovies = snapshot.data?.docs.map((doc) => doc.data()).toList() ?? [];
+
+        if (watchListMovies.isEmpty) {
+          return buildEmptyListState();
+        }
+
+        return GridView.builder(
+          padding: const EdgeInsets.all(16),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 15,
+            childAspectRatio: 0.65,
+          ),
+          itemCount: watchListMovies.length,
+          itemBuilder: (context, index) {
+            var movie2 = watchListMovies[index];
+            Movie movieBrief = Movie(
+              id: movie2.id,
+              title: movie2.title,
+              mediumCoverImage: movie2.mediumCoverImage,
+              rating: movie2.rating,
+            );
+            return InkWell(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(
+                    builder: (context) => FilmDetails(movieId: movie2.id!, allmovies: [])));
+              },
+              child: Cards(movie: movieBrief, heigh: 200, width: 120),
+            );
+          },
+        );
+      },
+    );
+  }
+
   Widget buildUserInfoSection() {
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -143,8 +189,13 @@ class _ProfilePageState extends State<ProfilePage> {
             ],
           ),
           const Spacer(),
-          buildCounter("12", "Watch List"),
-          const Spacer(),
+          StreamBuilder<QuerySnapshot<Movie2>>(
+            stream: MyDatabase.getWatchListStream(),
+            builder: (context, snapshot) {
+              int count = snapshot.hasData ? snapshot.data!.docs.length : 0;
+              return buildCounter(count.toString(), "Watch List");
+            },
+          ),          const Spacer(),
           StreamBuilder<QuerySnapshot<Movie2>>(
             stream: MyDatabase.getHistoryStream(),
             builder: (context, snapshot) {
@@ -179,7 +230,13 @@ class _ProfilePageState extends State<ProfilePage> {
         Expanded(
           flex: 1,
           child: AppButton(
-            onPressed: () {},
+
+              onPressed: () async {
+                await MyDatabase.logout();
+                if (context.mounted) {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  LoginScreen()));
+                }
+                },
             text: "Exit",
             color1: AppColors.red, color2: AppColors.red, TextColor: AppColors.white,
             Icons: const Icon(Icons.exit_to_app_outlined, color: AppColors.white, size: 20),

@@ -5,6 +5,7 @@ import 'package:moviesapp/Utilites/AppAssets.dart';
 import 'package:moviesapp/Utilites/AppTextStyles.dart';
 import '../../Cupit/Cupit.dart';
 import '../../Cupit/States.dart';
+import '../../FirebaseUtilities/userCollections.dart';
 import '../../Models/MoviesList/MoviesList.dart';
 import '../../Utilites/AppColors.dart';
 import '../../Widgets/Button.dart';
@@ -95,11 +96,11 @@ class FilmDetails extends StatelessWidget {
                                   color: AppColors.white,),
                                   onPressed: () {
                                     MovieCubit.get(context).changeBookMarke();
-                                    // if (MovieCubit.get(context).isSelected) {
-                                    //   HistoryDatabase.addToHistory(allmovies.firstWhere((m) => m.id == movieId));
-                                    // } else {
-                                    //   HistoryDatabase.removeFromHistory(movieId);
-                                    // }
+                                    if (!MovieCubit.get(context).isSelected) {
+                                      MyDatabase.addToWatchList(moviesdetails);
+                                    } else {
+                                      MyDatabase.removeFromWatchList(moviesdetails.id);
+                                    }
                                   },
 
                                 ),
