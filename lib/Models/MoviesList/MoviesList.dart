@@ -117,6 +117,33 @@ class Movie {
       dateUploaded: json['date_uploaded'],
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'url': url,
+      'imdb_code': imdbCode,
+      'title': title,
+      'title_english': titleEnglish,
+      'title_long': titleLong,
+      'slug': slug,
+      'year': year,
+      'rating': rating,
+      'runtime': runtime,
+      'genres': genres,
+      'summary': summary,
+      'description_full': descriptionFull,
+      'synopsis': synopsis,
+      'yt_trailer_code': ytTrailerCode,
+      'language': language,
+      'mpa_rating': mpaRating,
+      'background_image': backgroundImage,
+      'medium_cover_image': mediumCoverImage,
+      // تأكد من تحويل قائمة الـ torrents أيضاً
+      'torrents': torrents?.map((t) => t.toJson()).toList(),
+      'date_uploaded': dateUploaded,
+    };
+  }
 }
 
 class Torrent {
@@ -154,5 +181,19 @@ class Torrent {
       sizeBytes: json['size_bytes'],
       dateUploaded: json['date_uploaded'],
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'url': url,
+      'hash': hash,
+      'quality': quality,
+      'type': type,
+      'seeds': seeds,
+      'peers': peers,
+      'size': size,
+      'size_bytes': sizeBytes,
+      'date_uploaded': dateUploaded,
+    };
   }
 }

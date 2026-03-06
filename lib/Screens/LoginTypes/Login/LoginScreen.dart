@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:moviesapp/Utilites/AppAssets.dart';
 import 'package:moviesapp/Utilites/AppTextStyles.dart';
 import '../../../Models/UserDataModel/useerDM.dart';
-import '../../../Models/UserDataModel/userCollections.dart';
+import '../../../FirebaseUtilities/userCollections.dart';
 import '../../../Utilites/AppColors.dart';
 import '../../../Widgets/Button.dart';
 import '../../../Widgets/TextFiled.dart';

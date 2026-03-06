@@ -2,12 +2,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviesapp/Cupit/States.dart';
 
 import '../API Manager/APIManager.dart';
+import '../FirebaseUtilities/userCollections.dart';
 import '../Models/MovieDetails/MovieDetailsList.dart';
 import '../Models/MoviesList/MoviesList.dart';
 
 class MovieCubit extends Cubit <States> {
 
-   Movie2? movie2;
+  Movie2? movie2;
   MovieCubit() : super (MovieInitialState());
   static MovieCubit get (context)=>BlocProvider.of(context);
 
@@ -19,6 +20,7 @@ void getMovieDetails(int movieId)
     if(value!=null)
       {
         movie2=value;
+        saveToHistory(value);
         emit(MovieDetailsSucessState(value));
       }
   }).catchError((Error){
@@ -95,7 +97,9 @@ void changeBookMarke()
      emit(ChangeCategoryState());
    }
 
-
+   void saveToHistory(Movie2 movie) async {
+     await MyDatabase.addToHistory(movie);
+   }
 
 
 }

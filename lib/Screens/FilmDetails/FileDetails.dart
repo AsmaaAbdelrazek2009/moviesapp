@@ -95,7 +95,13 @@ class FilmDetails extends StatelessWidget {
                                   color: AppColors.white,),
                                   onPressed: () {
                                     MovieCubit.get(context).changeBookMarke();
+                                    // if (MovieCubit.get(context).isSelected) {
+                                    //   HistoryDatabase.addToHistory(allmovies.firstWhere((m) => m.id == movieId));
+                                    // } else {
+                                    //   HistoryDatabase.removeFromHistory(movieId);
+                                    // }
                                   },
+
                                 ),
                               ],
                             ),

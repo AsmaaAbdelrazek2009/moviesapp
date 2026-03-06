@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:moviesapp/Models/UserDataModel/useerDM.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+import '../Models/MovieDetails/MovieDetailsList.dart';
+
 abstract class MyDatabase {
   static CollectionReference<UserDM> _getCollectionRef() {
     return FirebaseFirestore.instance
@@ -53,5 +55,26 @@ abstract class MyDatabase {
       print(e.toString());
       return false;
     }
+  }
+
+
+  static CollectionReference<Movie2> getHistoryCollection(String userId) {
+    return FirebaseFirestore.instance
+        .collection("userCollection")
+        .doc(userId)
+        .collection("HistoryCollection")
+        .withConverter<Movie2>(
+      fromFirestore: (snapshot, _) => Movie2.fromJson(snapshot.data()!),
+      toFirestore: (value, _) => value.toJson(),
+    );
+  }
+
+  static Future<void> addToHistory(Movie2 movie) async {
+    var collectionRef = getHistoryCollection(UserDM.currentUser!.id!);
+    return collectionRef.doc(movie.id.toString()).set(movie);
+  }
+
+  static Stream<QuerySnapshot<Movie2>> getHistoryStream() {
+    return getHistoryCollection(UserDM.currentUser!.id!).snapshots();
   }
 }

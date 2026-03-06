@@ -8,6 +8,7 @@ import 'package:moviesapp/Utilites/AppTextStyles.dart';
 import 'package:moviesapp/Widgets/Card.dart';
 
 import '../../../Models/MoviesList/MoviesList.dart';
+import '../../FilmDetails/FileDetails.dart';
 
 class ExplorePage extends StatelessWidget {
    ExplorePage({super.key});
@@ -34,7 +35,7 @@ class ExplorePage extends StatelessWidget {
                 ),
                 buildTabBar(cubit.allGenres,context),
                 Expanded(
-                  child: buildFilteredMoviesList(cubit.filterdMovies),
+                  child: buildFilteredMoviesList(cubit.filterdMovies, cubit.allmovies),
                 ),
               ],
             ),
@@ -83,7 +84,7 @@ return
 
   }
 
-  buildFilteredMoviesList(List <Movie> filterdMovies)
+  buildFilteredMoviesList(List <Movie> filterdMovies, List<Movie> allmovies)
   {
     return GridView.builder(
         shrinkWrap: true,
@@ -95,7 +96,13 @@ return
         ),
         itemCount:filterdMovies.length ,
         itemBuilder: (context, index){
-          return Cards(movie: filterdMovies[index], heigh: 189, width: 279);
+          return InkWell(
+              onTap: ()
+              {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>FilmDetails(movieId: allmovies[index].id!, allmovies: allmovies,)));
+
+              },
+              child: Cards(movie: filterdMovies[index], heigh: 189, width: 279));
 
         });
   }
