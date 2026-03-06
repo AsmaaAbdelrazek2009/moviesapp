@@ -20,7 +20,6 @@ AvailableNow(imgPath: AppAssets.onBoarding4, rate: "4.6")
 List <String> AvatarPicker=[
   AppAssets.gamer1,
   AppAssets.gamer2,
-  AppAssets.gamer3,
   AppAssets.gamer4,
   AppAssets.gamer5,
   AppAssets.gamer6,

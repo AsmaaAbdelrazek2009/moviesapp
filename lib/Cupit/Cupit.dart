@@ -27,6 +27,17 @@ void getMovieDetails(int movieId)
 
 }
 
+
+  void getHomeMovies() {
+    emit(MovieDetailsLoadingState());
+    Apimanager.getMovies().then((movies) {
+      allmovies = movies;
+      emit(ExploreMovieDetailsSucessState(movies));
+    }).catchError((error) {
+      emit(ExploreMovieDetailsErrorState(error.toString()));
+    });
+  }
+
   bool isSelected=true;
 void changeBookMarke()
 {

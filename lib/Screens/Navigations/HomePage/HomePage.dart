@@ -4,7 +4,6 @@ import 'package:moviesapp/Models/AppConstans/AppConstans.dart';
 import 'package:moviesapp/Screens/Navigations/ExplorePage/ExplorePage.dart';
 import 'package:moviesapp/Utilites/AppAssets.dart';
 import 'package:moviesapp/Utilites/AppTextStyles.dart';
-
 import '../../../API Manager/APIManager.dart';
 import '../../../Models/MoviesList/MoviesList.dart';
 import '../../../Widgets/Card.dart';
@@ -17,64 +16,68 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(future: Apimanager.getMovies(), builder: (context,snapshot){
+    return Scaffold(
+      backgroundColor: Colors.black,
 
-       if(snapshot.hasError)
-         {
-           return Text("Erorr");
-         }
-       else if (snapshot.hasData)
-         {
-           List <Movie> movies= snapshot.data!;
-           List<Movie> sortedMovies = [...movies];
-           List<Movie> normalMovies = [...movies];
-
-           // List<Movie> horrorMovies = movies.where((m) => m.genres!.contains("Horror")).toList();
-           sortedMovies.sort((a, b) {
-
-             DateTime dateA = DateTime.parse(a.dateUploaded ?? "1900-01-01");
-             DateTime dateB = DateTime.parse(b.dateUploaded ?? "1900-01-01");
-             return dateB.compareTo(dateA);
-           });
-           return SingleChildScrollView(
-             child: SafeArea(
-               child: Column(
-                 children: [
-                   Padding(
-                     padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                     child: Text("Available Now",style: AppTextStyles.whiteHeader500mediam36,),
-                   ),
-                   buildAvailableNowList(context,sortedMovies),
-                   SizedBox(height: 21,),
-                   Text("Watch Now",style: AppTextStyles.whiteHeader500mediam36,),
-               
-                   Padding(
-                     padding: const EdgeInsets.symmetric(vertical: 12.0),
-                     child: Row(
-                       children: [
-                         Text("Action",style: AppTextStyles.whitesubHeader400mediam20,),
-                         Spacer(),
-                         InkWell(
-                             onTap: ()
-                             {
-                               Navigator.push(context, MaterialPageRoute(builder: (context)=>ExplorePage( allmovies: movies,)));
-                             },
-                             child: Text("See more", style: AppTextStyles.yellowText400mediam16,)),
-                       ],
+      body: FutureBuilder(future: Apimanager.getMovies( ), builder: (context,snapshot){
+      
+         if(snapshot.hasError)
+           {
+             return Text("Erorr");
+           }
+         else if (snapshot.hasData)
+           {
+             List <Movie> movies= snapshot.data!;
+             List<Movie> sortedMovies = [...movies];
+             List<Movie> normalMovies = [...movies];
+             // List<Movie> horrorMovies = movies.where((m) => m.genres!.contains("Horror")).toList();
+             sortedMovies.sort((a, b) {
+      
+               DateTime dateA = DateTime.parse(a.dateUploaded ?? "1900-01-01");
+               DateTime dateB = DateTime.parse(b.dateUploaded ?? "1900-01-01");
+               return dateB.compareTo(dateA);
+             });
+             return SingleChildScrollView(
+               child: SafeArea(
+                 child: Column(
+                   children: [
+                     Padding(
+                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                       child: Image.asset(AppAssets.AvailableNow),
                      ),
-                   ),
-                   buildWatchNowList(context,normalMovies),
-                 ],
-               ),
-             ),
-           );
-         }
-       else
-       {
-         return CircularProgressIndicator();
-       }
+                     buildAvailableNowList(context,sortedMovies),
+                     SizedBox(height: 21,),
+                  Image.asset(AppAssets.watchNow),
 
-    });
+
+                     Padding(
+                       padding: const EdgeInsets.symmetric(vertical: 12.0),
+                       child: Row(
+                         children: [
+                           Text("Action",style: AppTextStyles.whitesubHeader400mediam20,),
+                           Spacer(),
+                           InkWell(
+                               onTap: ()
+                               {
+                                 Navigator.push(context, MaterialPageRoute(builder: (context)=>ExplorePage( )));
+                               },
+                               child: Text("   See more   ", style: AppTextStyles.yellowText400mediam16,)),
+                         ],
+                       ),
+                     ),
+                     buildWatchNowList(context,normalMovies),
+                   ],
+                 ),
+               ),
+             );
+           }
+         else
+         {
+           return CircularProgressIndicator();
+         }
+      
+      }),
+    );
 
 
   }

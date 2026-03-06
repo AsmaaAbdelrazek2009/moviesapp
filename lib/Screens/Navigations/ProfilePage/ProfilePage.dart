@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:moviesapp/Screens/EditProfile/EditProfile.dart';
 import 'package:moviesapp/Utilites/AppAssets.dart';
 import 'package:moviesapp/Utilites/AppTextStyles.dart';
 import 'package:moviesapp/Widgets/Button.dart';
 
+import '../../../Models/UserDataModel/useerDM.dart';
 import '../../../Utilites/AppColors.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -24,10 +26,10 @@ class ProfilePage extends StatelessWidget {
                     children: [
                       Column(
                         children: [
-                          Image.asset(AppAssets.gamer1, height: 118),
+                          Image.asset(UserDM.currentUser!.imgPath!, height: 118),
                           SizedBox(height: 16),
                           Text(
-                            "name",
+                            UserDM.currentUser!.name!,
                             style: AppTextStyles.whiteHeader700mediam20,
                           ),
                         ],
@@ -67,7 +69,10 @@ class ProfilePage extends StatelessWidget {
                     Expanded(
                       flex: 2,
                       child: AppButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>EditProfile()));
+
+                        },
                         text: "Edit Profile",
                         color1: AppColors.yellow,
                         color2: AppColors.yellow,

@@ -1,160 +1,188 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviesapp/Models/MovieDetails/MovieDetailsList.dart';
 import 'package:moviesapp/Utilites/AppAssets.dart';
 import 'package:moviesapp/Utilites/AppTextStyles.dart';
-import 'package:moviesapp/Models/MovieDetails/MovieDetailsList.dart';
-import '../../API Manager/APIManager.dart';
+import '../../Cupit/Cupit.dart';
+import '../../Cupit/States.dart';
 import '../../Models/MoviesList/MoviesList.dart';
 import '../../Utilites/AppColors.dart';
 import '../../Widgets/Button.dart';
 import '../../Widgets/Card.dart';
-import '../Navigations/BottomNavBar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FilmDetails extends StatelessWidget {
-  const FilmDetails({super.key, required this.movieId, required this.allmovies});
+   FilmDetails({super.key, required this.movieId, required this.allmovies});
   final int movieId;
   final List<Movie> allmovies;
+
+
+
   // final MoviesDetails2 moviedetails;
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
 
       backgroundColor: Colors.black,
 
-      body: FutureBuilder(future: Apimanager.getMoviesDetails(movieId),
-       builder: (context,snapshot){
-        if(snapshot.hasError)
-          {
-            return Text("Erorr");
+      body: BlocProvider(create: (context)=>MovieCubit()..getMovieDetails(movieId),
+          child: BlocConsumer<MovieCubit,States>(
 
-          }
-        else if(snapshot.hasData)
-          {
-            Movie2 moviesdetails=snapshot.data!;
-            return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Stack(
-                      children: [
+            listener: (context, state) {
+            },
 
-                        Image.network(moviesdetails.mediumCoverImage,fit: BoxFit.cover,width: double.infinity,),
-                        Container(
-                          height: MediaQuery.of(context).size.height*0.8,
-                          decoration: BoxDecoration(
-                              gradient: LinearGradient(
-                                  begin: Alignment.topCenter ,
-                                  end: Alignment.bottomCenter,
-                                  colors:[
-                                    AppColors.black.withOpacity(0.6),
-                                    Colors.black.withOpacity(0.99),
-                                  ]
-                              )
+            builder: ( context,  state) {
+              if (MovieCubit.get(context).movie2 != null) {
+                final moviesdetails = MovieCubit.get(context).movie2 ;
+                return SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Stack(
+                        children: [
+                          Image.network(
+                            moviesdetails!.mediumCoverImage, fit: BoxFit.cover,
+                            width: double.infinity,),
+                          Container(
+                            height: MediaQuery
+                                .of(context)
+                                .size
+                                .height * 0.8,
+                            decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      AppColors.black.withOpacity(0.6),
+                                      Colors.black.withOpacity(0.99),
+                                    ]
+                                )
+                            ),
                           ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.only(top: 330.0),
-                          child: Column(
-                            children: [
-                              Center(child: Image.asset(AppAssets.Play,width: 70,)),
-                              SizedBox(height:250,),
-                              Center(child: Text(moviesdetails.title,style: AppTextStyles.whiteHeader700mediam24,)),
-                              SizedBox(height:25,),
-                              Text(moviesdetails.year.toString(),style: AppTextStyles.greySubHeader400mediam20,)
-                            ],
+                          Padding(
+                            padding: const EdgeInsets.only(top: 330.0),
+                            child: Column(
+                              children: [
+                                Center(child: Image.asset(
+                                  AppAssets.Play, width: 70,)),
+                                SizedBox(height: 250,),
+                                Center(child: Text(moviesdetails.title,
+                                  style: AppTextStyles
+                                      .whiteHeader700mediam24,)),
+                                SizedBox(height: 25,),
+                                Text(moviesdetails.year.toString(),
+                                  style: AppTextStyles
+                                      .greySubHeader400mediam20,)
+                              ],
+                            ),
                           ),
-                        ),
-                        InkWell(
-                            onTap: ()
-                            {
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=>BottomNavBar()));
-                            },
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 16),
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 16),
-                                    child: Icon(Icons.arrow_back, color: AppColors.white,size: 30, ),
-                                  ),
-                                  Spacer(),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 16.0,vertical: 16),
-                                    child: Icon(Icons.bookmark, color: AppColors.white,size: 30, ),
-                                  ),
-                                ],
-                              ),
-                            )),
-                      ],
-                    ),
-                    AppButton(text: "Watch",
-                      onPressed: ()async{
-                      if(moviesdetails.url!=null)
-                        {
-                          final Uri url=Uri.parse(moviesdetails.url);
-                          if(await canLaunchUrl(url))
-                            {
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16.0, vertical: 40),
+                            child: Row(
+                              children: [
+                                IconButton(icon: Icon(
+                                  Icons.arrow_back, size: 30,
+                                  color: AppColors.white,),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                  },
+                                ),
+                                Spacer(),
+                                IconButton(icon: Icon(
+                                  MovieCubit.get(context).isSelected ? Icons.bookmark_border : Icons
+                                      .bookmark, size: 30,
+                                  color: AppColors.white,),
+                                  onPressed: () {
+                                    MovieCubit.get(context).changeBookMarke();
+                                  },
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      AppButton(text: "Watch",
+                        onPressed: () async {
+                          if (moviesdetails.url != null) {
+                            final Uri url = Uri.parse(moviesdetails.url);
+                            if (await canLaunchUrl(url)) {
                               await launchUrl(url);
                             }
-                          else
-                            {
+                            else {
                               throw "Could not launch $url";
-
                             }
-                        }
-                      },color1: AppColors.red, color2: AppColors.red, TextColor: AppColors.white,),
-                    SizedBox(height: 10,),
+                          }
+                        },
+                        color1: AppColors.red,
+                        color2: AppColors.red,
+                        TextColor: AppColors.white,),
+                      SizedBox(height: 10,),
                       Row(
                         children: [
-                          buildFavTimeStarContainer(moviesdetails.likeCount.toString(), Icons.favorite ),
+                          buildFavTimeStarContainer(
+                              moviesdetails.likeCount.toString(),
+                              Icons.favorite),
                           Spacer(),
-                          buildFavTimeStarContainer(moviesdetails.runtime.toString(), Icons.timelapse ),
+                          buildFavTimeStarContainer(
+                              moviesdetails.runtime.toString(),
+                              Icons.timelapse),
                           Spacer(),
-                          buildFavTimeStarContainer(moviesdetails.rating.toString(), Icons.star),
+                          buildFavTimeStarContainer(
+                              moviesdetails.rating.toString(), Icons.star),
                         ],
                       ),
-                    SizedBox(height: 10,),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text("ScreenShots",style: AppTextStyles.whiteHeader700mediam24,),
+                      SizedBox(height: 10,),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text("ScreenShots",
+                              style: AppTextStyles.whiteHeader700mediam24,),
                             buildListView(moviesdetails),
-                          SizedBox(height: 10,),
-                          Text("Similar ",style: AppTextStyles.whiteHeader700mediam24,),
+                            SizedBox(height: 10,),
+                            Text("Similar ",
+                              style: AppTextStyles.whiteHeader700mediam24,),
 
-                          buildFilmGridView(moviesdetails,allmovies),
-                          SizedBox(height: 16,),
-                          Text("Summery ",style: AppTextStyles.whiteHeader700mediam24,),
-                          SizedBox(height: 8,),
-                          SizedBox(
-                            width: 398,
-                            child: Text(moviesdetails.descriptionFull,style: AppTextStyles.whitesubHeader400mediam16,),
-                          ),
-                          Text("Cast ",style: AppTextStyles.whiteHeader700mediam24,),
+                            buildFilmGridView(moviesdetails,allmovies),
+                            SizedBox(height: 16,),
+                            Text("Summery ",
+                              style: AppTextStyles.whiteHeader700mediam24,),
+                            SizedBox(height: 8,),
+                            SizedBox(
+                              width: 398,
+                              child: Text(moviesdetails.descriptionFull,
+                                style: AppTextStyles
+                                    .whitesubHeader400mediam16,),
+                            ),
+                            Text("Cast ",
+                              style: AppTextStyles.whiteHeader700mediam24,),
 
-                          buildCastCard(),
-                          buildCastCard(),
-                          buildCastCard(),
+                            buildCastCard(),
+                            buildCastCard(),
+                            buildCastCard(),
 
-                          buildGenres( moviesdetails.genres),
+                            buildGenres(moviesdetails.genres),
 
 
+                          ],
+                        ),
+                      )
 
-                        ],
-                      ),
-                    )
+                    ],
+                  ),
+                );
+              }
+              else
+                {
+                  return CircularProgressIndicator();
+                }
 
-                  ],
-                ),
-              );
-          }
-        else
-          {
-            return CircularProgressIndicator();
-          }
-       })
+            },
+
+          ),
+    )
     );
   }
 
@@ -211,7 +239,13 @@ class FilmDetails extends StatelessWidget {
     ),
         itemCount: similarMovies.length > 4 ? 4 :  similarMovies.length ,
         itemBuilder: (context, index){
-          return Cards(movie: similarMovies[index], heigh: 189, width: 279);
+          return InkWell(
+              onTap: ()
+              {
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>FilmDetails(movieId: allmovies[index].id!, allmovies: allmovies,)));
+
+              },
+              child: Cards(movie: similarMovies[index], heigh: 189, width: 279));
 
         });
   }
@@ -260,5 +294,4 @@ class FilmDetails extends StatelessWidget {
       ],
     );
   }
-
 }

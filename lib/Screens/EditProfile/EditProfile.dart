@@ -1,20 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:moviesapp/Models/AppConstans/AppConstans.dart';
+import 'package:moviesapp/Screens/LoginTypes/Login/LoginScreen.dart';
 import 'package:moviesapp/Utilites/AppAssets.dart';
 import 'package:moviesapp/Utilites/AppTextStyles.dart';
+import '../../Models/UserDataModel/useerDM.dart';
+import '../../Models/UserDataModel/userCollections.dart';
 import '../../Utilites/AppColors.dart';
 import '../../Widgets/Button.dart';
 import '../../Widgets/TextFiled.dart';
 import '../Navigations/ProfilePage/ProfilePage.dart';
 
 class EditProfile extends StatefulWidget {
-  const EditProfile({super.key});
+   EditProfile({super.key});
 
-  @override
+
+   @override
   State<EditProfile> createState() => _EditProfileState();
 }
 
 class _EditProfileState extends State<EditProfile> {
+
+  final nameController = TextEditingController();
+  final phoneController = TextEditingController();
+  String selectedAvatar = UserDM.currentUser?.imgPath ?? AppAssets.gamer2;
+
+  @override
+  void initState() {
+    super.initState();
+    nameController.text = UserDM.currentUser?.name ?? "";
+    phoneController.text = UserDM.currentUser?.phone ?? "";
+  }
+
   @override
   Widget build(BuildContext context) {
     List<String> avatarpicker = AvatarPicker;
@@ -46,17 +62,19 @@ class _EditProfileState extends State<EditProfile> {
                   onTap: () {
                     buildAvatarpickerBottomSheet(context, avatarpicker);
                   },
-                  child: Image.asset(AppAssets.gamer2, height: 150),
+                  child: Image.asset(selectedAvatar, height: 150),
                 ),
               ),
               SizedBox(height: 19),
               TextField1(
+                controller: nameController,
                 lableTitle: "name",
                 icon1: Icon(Icons.person),
                 onChanged: (value) {},
               ),
               SizedBox(height: 19),
               TextField1(
+                controller: phoneController,
                 lableTitle: "phone",
                 icon1: Icon(Icons.person),
                 onChanged: (value) {},
@@ -75,7 +93,13 @@ class _EditProfileState extends State<EditProfile> {
                 color1: AppColors.red,
                 color2: AppColors.red,
                 TextColor: AppColors.white,
-                onPressed: () {},
+                onPressed: () async{
+                  bool result = await MyDatabase.deleteAccount();
+                  if (result && mounted) {
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
+                  }
+
+                },
               ),
               SizedBox(height: 0),
               AppButton(
@@ -83,7 +107,9 @@ class _EditProfileState extends State<EditProfile> {
                 color1: AppColors.yellow,
                 color2: AppColors.yellow,
                 TextColor: AppColors.black,
-                onPressed: () {},
+                onPressed: () {
+                  handleUpdate();
+                },
               ),
             ],
           ),
@@ -127,16 +153,12 @@ class _EditProfileState extends State<EditProfile> {
                   itemCount: avatarpicker.length,
                   itemBuilder: (context, index) {
                     return InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: InkWell(
                         onTap: (){
 
-                          isSelected=index;
                           setState(() {
-
+                            selectedAvatar = avatarpicker[index];
                           });
+                          Navigator.pop(context);
 
                         },
                         child: Container(
@@ -150,7 +172,7 @@ class _EditProfileState extends State<EditProfile> {
                             child: Image.asset(avatarpicker.elementAt(index)),
                           ),
                         ),
-                      ),
+
                     );
                   },
                 ),
@@ -159,6 +181,26 @@ class _EditProfileState extends State<EditProfile> {
           ),
         );
       },
+    );
+  }
+
+  void handleUpdate() async {
+
+    UserDM updatedUser = UserDM(
+      id: UserDM.currentUser!.id,
+      name: nameController.text,
+      phone: phoneController.text,
+      email: UserDM.currentUser!.email,
+      imgPath: selectedAvatar,
+    );
+
+    await MyDatabase.updateUserInFirestore(updatedUser);
+
+    UserDM.currentUser = updatedUser;
+
+    Navigator.pop(context);
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text("Profile Updated Successfully")),
     );
   }
 }
