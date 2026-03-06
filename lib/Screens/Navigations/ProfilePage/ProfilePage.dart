@@ -1,21 +1,28 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:moviesapp/Screens/EditProfile/EditProfile.dart';
 import 'package:moviesapp/Utilites/AppAssets.dart';
 import 'package:moviesapp/Utilites/AppTextStyles.dart';
 import 'package:moviesapp/Widgets/Button.dart';
 
+import '../../../FirebaseUtilities/userCollections.dart';
+import '../../../Models/MovieDetails/MovieDetailsList.dart';
+import '../../../Models/MoviesList/MoviesList.dart';
 import '../../../Models/UserDataModel/useerDM.dart';
 import '../../../Utilites/AppColors.dart';
+import '../../../Widgets/Card.dart';
+import '../../FilmDetails/FileDetails.dart';
 
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
-
   @override
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  // final List<Movie> allmovies;
+
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
@@ -54,8 +61,8 @@ class _ProfilePageState extends State<ProfilePage> {
             Expanded(
               child: TabBarView(
                 children: [
-                  buildEmptyListState(),
-                  buildEmptyListState(),
+                  buildHistoryList(),
+                  buildHistoryList(),
                 ],
               ),
             ),
@@ -75,6 +82,53 @@ class _ProfilePageState extends State<ProfilePage> {
       ],
     );
   }
+  Widget buildHistoryList( ) {
+    return StreamBuilder<QuerySnapshot<Movie2>>(
+      stream: MyDatabase.getHistoryStream(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator(color: AppColors.yellow));
+        }
+
+        var historyMovies = snapshot.data?.docs.map((doc) => doc.data()).toList() ?? [];
+
+        if (historyMovies.isEmpty) {
+          return buildEmptyListState();
+        }
+
+        return GridView.builder(
+          padding: const EdgeInsets.all(16),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 3,
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 15,
+            childAspectRatio: 0.65,
+          ),
+          itemCount: historyMovies.length,
+          itemBuilder: (context, index) {
+            var movie2 = historyMovies[index];
+            Movie movieBrief = Movie(
+              id: movie2.id,
+              title: movie2.title,
+              mediumCoverImage: movie2.mediumCoverImage,
+              rating: movie2.rating,
+            );
+
+            return InkWell(
+              onTap: () {
+                // Navigator.push(context, MaterialPageRoute(builder: (context)=>FilmDetails(movieId: allmovies[index].id!, allmovies: allmovies,)));
+              },
+              child: Cards(
+                movie: movieBrief,
+                heigh: 200,
+                width: 120,
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
 
   Widget buildUserInfoSection() {
     return Padding(
@@ -91,8 +145,13 @@ class _ProfilePageState extends State<ProfilePage> {
           const Spacer(),
           buildCounter("12", "Watch List"),
           const Spacer(),
-          buildCounter("12", "History"),
-        ],
+          StreamBuilder<QuerySnapshot<Movie2>>(
+            stream: MyDatabase.getHistoryStream(),
+            builder: (context, snapshot) {
+              int count = snapshot.hasData ? snapshot.data!.docs.length : 0;
+              return buildCounter(count.toString(), "History");
+            },
+          ),        ],
       ),
     );
   }
