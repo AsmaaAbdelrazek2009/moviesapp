@@ -23,12 +23,14 @@ class _SignupScreenState extends State<SignupScreen> {
   final EmailController = TextEditingController();
 
   final PasswordController = TextEditingController();
+  final ConfirmPasswordController = TextEditingController();
 
   final NameController = TextEditingController();
 
   final PhoneController = TextEditingController();
    final CarouselSliderController controller = CarouselSliderController();
   String selectedAvatarPath = AvatarPicker[0];
+   bool visible=true;
 
   @override
   Widget build(BuildContext context) {
@@ -51,10 +53,22 @@ class _SignupScreenState extends State<SignupScreen> {
             SizedBox(height: 24,),
             TextField1(lableTitle: "e-mail",icon1: Icon(Icons.email_outlined,color: AppColors.white,),onChanged: (value){},controller: EmailController,),
             SizedBox(height: 24,),
-            TextField1(lableTitle: "Passowrd",icon1: Icon(Icons.lock_outline,color: AppColors.white,),onChanged: (value){},controller: PasswordController,),
-            SizedBox(height: 24,),
-            TextField1(lableTitle: "Confirm Password",icon1: Icon(Icons.lock_outline,color: AppColors.white,),onChanged: (value){}, controller: PasswordController,),
-            SizedBox(height: 24,),
+            TextField1(obscureText: visible,lableTitle: "Passowrd",icon1: Icon(Icons.lock_outline,color: AppColors.white,),onChanged: (value){}, controller: PasswordController,icon2: IconButton(
+              icon: Icon(
+                visible ? Icons.visibility_off : Icons.visibility,
+                color: AppColors.white,
+              ), onPressed: () {
+              setState(() {
+                visible = !visible;
+              });  },)),            SizedBox(height: 24,),
+            TextField1(obscureText: visible,lableTitle: "Confirm Passowrd",icon1: Icon(Icons.lock_outline,color: AppColors.white,),onChanged: (value){}, controller: ConfirmPasswordController,icon2: IconButton(
+              icon: Icon(
+                visible ? Icons.visibility_off : Icons.visibility,
+                color: AppColors.white,
+              ), onPressed: () {
+              setState(() {
+                visible = !visible;
+              });  },)),              SizedBox(height: 24,),
             TextField1(lableTitle: "Phone number",icon1: Icon(Icons.phone,color: AppColors.white,), onChanged: (value){ }, controller: PhoneController,),
             SizedBox(height: 24,),
         buildCreateAccount(context),
@@ -83,6 +97,15 @@ class _SignupScreenState extends State<SignupScreen> {
         color2: AppColors.black,
         TextColor:AppColors.black,
         onPressed: () async{
+          if (PasswordController.text != ConfirmPasswordController.text) {
+            buildAlertDialoge("Passwords do not match. Please check again.", context, PasswordController);
+            return;
+          }
+
+          if (EmailController.text.isEmpty || NameController.text.isEmpty) {
+            buildAlertDialoge("Please fill in all fields", context, EmailController);
+            return;
+          }
             String Message="";
             try {
               showLoading(context);

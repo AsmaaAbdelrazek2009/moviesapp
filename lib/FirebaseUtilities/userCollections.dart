@@ -20,10 +20,15 @@ abstract class MyDatabase {
 
     return docRef.set(user);
   }
+
   static Future<UserDM?> getUserFromFireStore(String id) async {
     var collectionRef = _getCollectionRef();
     var docSnapshot = await collectionRef.doc(id).get();
-    return docSnapshot.data(); }
+    return docSnapshot.data();
+  }
+  static Stream<DocumentSnapshot<UserDM>> getUserStream(String id) {
+    return _getCollectionRef().doc(id).snapshots();
+  }
 
   static Future<void> updateUserInFirestore(UserDM user) async {
 

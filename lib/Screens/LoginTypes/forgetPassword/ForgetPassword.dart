@@ -9,6 +9,7 @@ import '../../../Cupit/States.dart';
 import '../../../Utilites/AppColors.dart';
 import '../../../Widgets/Button.dart';
 import '../../../Widgets/TextFiled.dart';
+import '../Login/LoginScreen.dart';
 
 class ForgetPassword extends StatelessWidget {
    ForgetPassword({super.key});
@@ -27,7 +28,9 @@ class ForgetPassword extends StatelessWidget {
               backgroundColor: AppColors.black,
               centerTitle: true,
               title: Text("forget Password",style: AppTextStyles.yellowText400mediam16,),
-              leading: IconButton(onPressed: (){}, icon: Icon(Icons.arrow_back,size: 20,color: AppColors.yellow,)),
+              leading: IconButton(onPressed: (){
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>LoginScreen()));
+              }, icon: Icon(Icons.arrow_back,size: 20,color: AppColors.yellow,)),
             ),
             body: Column(
               children: [

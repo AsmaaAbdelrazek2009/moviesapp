@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviesapp/API%20Manager/APIManager.dart';
-import 'package:moviesapp/Cupit/Cupit.dart';
+import 'package:moviesapp/Cupit/MovieCupit.dart';
 import 'package:moviesapp/Cupit/States.dart';
 import 'package:moviesapp/Utilites/AppColors.dart';
 import 'package:moviesapp/Utilites/AppTextStyles.dart';
@@ -99,7 +99,7 @@ return
           return InkWell(
               onTap: ()
               {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>FilmDetails(movieId: allmovies[index].id!, allmovies: allmovies,)));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>FilmDetails(movieId: filterdMovies[index].id!, allmovies: allmovies,)));
 
               },
               child: Cards(movie: filterdMovies[index], heigh: 189, width: 279));

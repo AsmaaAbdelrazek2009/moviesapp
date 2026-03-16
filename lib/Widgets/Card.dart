@@ -21,7 +21,10 @@ class Cards extends StatelessWidget {
       width: width,
       height: heigh,
       decoration: BoxDecoration(
-       image: DecorationImage(image: NetworkImage(movie.mediumCoverImage??""),fit: BoxFit.cover),
+       image: DecorationImage(image: NetworkImage(movie.mediumCoverImage??"",headers: {
+       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+       'Referer': 'https://yts.bz/',
+       },),fit: BoxFit.cover),
         borderRadius: BorderRadius.circular(20),
       ),
       child:

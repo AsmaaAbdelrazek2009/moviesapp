@@ -22,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
 final TextEditingController EmailController=TextEditingController();
 
   final TextEditingController PasswordController=TextEditingController();
-
+bool visible = true;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +37,14 @@ final TextEditingController EmailController=TextEditingController();
 
             TextField1(lableTitle: "e-mail",icon1: Icon(Icons.email_outlined,color: AppColors.white,),onChanged: (value){}, controller: EmailController),
             SizedBox(height: 24,),
-            TextField1(lableTitle: "Passowrd",icon1: Icon(Icons.lock_outline,color: AppColors.white,),onChanged: (value){}, controller: PasswordController),
+            TextField1(obscureText: visible,lableTitle: "Passowrd",icon1: Icon(Icons.lock_outline,color: AppColors.white,),onChanged: (value){}, controller: PasswordController,icon2: IconButton(
+              icon: Icon(
+                visible ? Icons.visibility_off : Icons.visibility,
+                color: AppColors.white,
+              ), onPressed: () {
+                setState(() {
+                  visible = !visible;
+            });  },)),
             SizedBox(height: 24,),
           Align(
               alignment: Alignment.topRight,

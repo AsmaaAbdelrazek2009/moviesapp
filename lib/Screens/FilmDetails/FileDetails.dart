@@ -3,7 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviesapp/Models/MovieDetails/MovieDetailsList.dart';
 import 'package:moviesapp/Utilites/AppAssets.dart';
 import 'package:moviesapp/Utilites/AppTextStyles.dart';
-import '../../Cupit/Cupit.dart';
+import '../../Cupit/MovieCupit.dart';
 import '../../Cupit/States.dart';
 import '../../FirebaseUtilities/userCollections.dart';
 import '../../Models/MoviesList/MoviesList.dart';
@@ -249,7 +249,7 @@ class FilmDetails extends StatelessWidget {
           return InkWell(
               onTap: ()
               {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>FilmDetails(movieId: allmovies[index].id!, allmovies: allmovies,)));
+                Navigator.push(context, MaterialPageRoute(builder: (context)=>FilmDetails(movieId: similarMovies[index].id!, allmovies: allmovies,)));
 
               },
               child: Cards(movie: similarMovies[index], heigh: 189, width: 279));

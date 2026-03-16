@@ -62,5 +62,21 @@ class ChangeCategoryState extends States{
 }
 
 class ForgetPasswordState extends States{
+}
+
+class ProfileInitialState extends States{
 
 }
+class ProfileLoadingState extends States {}
+
+class ProfileSuccessState extends States {
+  final List<Movie2> watchList;
+  final List<Movie2> history;
+  ProfileSuccessState(this.watchList, this.history);
+}
+
+class ProfileErrorState extends States {
+  final String errorMessage;
+  ProfileErrorState(this.errorMessage);
+}
+

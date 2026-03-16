@@ -1,211 +1,137 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:moviesapp/Screens/EditProfile/EditProfile.dart';
 import 'package:moviesapp/Screens/LoginTypes/Login/LoginScreen.dart';
 import 'package:moviesapp/Utilites/AppAssets.dart';
 import 'package:moviesapp/Utilites/AppTextStyles.dart';
 import 'package:moviesapp/Widgets/Button.dart';
-
-import '../../../FirebaseUtilities/userCollections.dart';
-import '../../../Models/MovieDetails/MovieDetailsList.dart';
+import '../../../Cupit/MovieCupit.dart';
+import '../../../Cupit/ProfileCupit.dart';
+import '../../../Cupit/States.dart';
 import '../../../Models/MoviesList/MoviesList.dart';
 import '../../../Models/UserDataModel/useerDM.dart';
 import '../../../Utilites/AppColors.dart';
 import '../../../Widgets/Card.dart';
 import '../../FilmDetails/FileDetails.dart';
 
-
-class ProfilePage extends StatefulWidget {
+class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
-  @override
-  State<ProfilePage> createState() => _ProfilePageState();
-}
-
-class _ProfilePageState extends State<ProfilePage> {
-  // final List<Movie> allmovies;
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
-      length: 2,
-      child: Scaffold(
-        backgroundColor: AppColors.black,
-        body: Column(
-          children: [
-            Container(
-              decoration: BoxDecoration(color: AppColors.Grey),
-              child: Column(
-                children: [
-                  buildUserInfoSection(),
-                  buildActionButtons(context),
-                  const SizedBox(height: 16),
+    return BlocProvider(
+      create: (context) => ProfileCupit()..getProfileData(),
+      child: BlocConsumer<ProfileCupit, States>(
+        listener: (context, state) {},
+        builder: (context, state) {
+          var cubit = ProfileCupit.get(context);
 
-                  buildTabBar(),
-                  const SizedBox(height: 8),
+          return DefaultTabController(
+            length: 2,
+            child: Scaffold(
+              backgroundColor: AppColors.black,
+              body: Column(
+                children: [
+
+                  Container(
+                    decoration: const BoxDecoration(color: AppColors.Grey),
+                    child: Column(
+                      children: [
+                        const SizedBox(height: 40),
+                        buildUserInfoSection(cubit),
+                        buildActionButtons(context, cubit),
+                        const SizedBox(height: 16),
+                        buildTabBar(),
+                        const SizedBox(height: 8),
+                      ],
+                    ),
+                  ),
+
+
+                  Expanded(
+                    child: state is ProfileLoadingState
+                        ? const Center(child: CircularProgressIndicator(color: AppColors.yellow))
+                        : TabBarView(
+                      children: [
+                        buildMoviesGrid(cubit.watchList),
+                        buildMoviesGrid(cubit.historyList),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),
-
-            Expanded(
-              child: TabBarView(
-                children: [
-                  buildWatchList(),
-                  buildHistoryList(),
-                ],
-              ),
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
 
-  TabBar buildTabBar() {
-    return TabBar(
-                  dividerColor: Colors.transparent,
-                  indicatorSize: TabBarIndicatorSize.tab,
-                 indicatorColor: AppColors.yellow,
-                  labelColor: AppColors.white,
-                  unselectedLabelColor: AppColors.white,
-                  tabs: const [
-                    Tab(icon: Icon(Icons.table_rows_rounded), text: "Watch List"),
-                    Tab(icon: Icon(Icons.folder), text: "History"),
-                  ],
-                );
-  }
 
-  Widget buildEmptyListState() {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Image.asset(AppAssets.popCorn),
-        const SizedBox(height: 16),
-        Text("No Movies Added Yet", style: AppTextStyles.whiteHeader700mediam20),
-      ],
-    );
-  }
-  Widget buildHistoryList( ) {
-    return StreamBuilder<QuerySnapshot<Movie2>>(
-      stream: MyDatabase.getHistoryStream(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(color: AppColors.yellow));
-        }
+  Widget buildMoviesGrid(List movies) {
+    if (movies.isEmpty) return buildEmptyListState();
 
-        var historyMovies = snapshot.data?.docs.map((doc) => doc.data()).toList() ?? [];
+    return GridView.builder(
+      padding: const EdgeInsets.all(16),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 3,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 15,
+        childAspectRatio: 0.65,
+      ),
+      itemCount: movies.length,
+      itemBuilder: (context, index) {
+        var m2 = movies[index];
+        Movie movieBrief = Movie(
+          id: m2.id,
+          title: m2.title,
+          mediumCoverImage: m2.mediumCoverImage,
+          rating: m2.rating,
+        );
 
-        if (historyMovies.isEmpty) {
-          return buildEmptyListState();
-        }
-
-        return GridView.builder(
-          padding: const EdgeInsets.all(16),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 15,
-            childAspectRatio: 0.65,
-          ),
-          itemCount: historyMovies.length,
-          itemBuilder: (context, index) {
-            var movie2 = historyMovies[index];
-            Movie movieBrief = Movie(
-              id: movie2.id,
-              title: movie2.title,
-              mediumCoverImage: movie2.mediumCoverImage,
-              rating: movie2.rating,
-            );
-
-            return InkWell(
-              onTap: () {
-                // Navigator.push(context, MaterialPageRoute(builder: (context)=>FilmDetails(movieId: allmovies[index].id!, allmovies: allmovies,)));
-              },
-              child: Cards(
-                movie: movieBrief,
-                heigh: 200,
-                width: 120,
+        return InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => FilmDetails(movieId: m2.id!, allmovies: []),
               ),
             );
           },
-        );
-      },
-    );
-  }
-
-
-  Widget buildWatchList() {
-    return StreamBuilder<QuerySnapshot<Movie2>>(
-      stream: MyDatabase.getWatchListStream(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator(color: AppColors.yellow));
-        }
-        var watchListMovies = snapshot.data?.docs.map((doc) => doc.data()).toList() ?? [];
-
-        if (watchListMovies.isEmpty) {
-          return buildEmptyListState();
-        }
-
-        return GridView.builder(
-          padding: const EdgeInsets.all(16),
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 3,
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 15,
-            childAspectRatio: 0.65,
+          child: Cards(
+            movie: movieBrief,
+            heigh: 200,
+            width: 120,
           ),
-          itemCount: watchListMovies.length,
-          itemBuilder: (context, index) {
-            var movie2 = watchListMovies[index];
-            Movie movieBrief = Movie(
-              id: movie2.id,
-              title: movie2.title,
-              mediumCoverImage: movie2.mediumCoverImage,
-              rating: movie2.rating,
-            );
-            return InkWell(
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(
-                    builder: (context) => FilmDetails(movieId: movie2.id!, allmovies: [])));
-              },
-              child: Cards(movie: movieBrief, heigh: 200, width: 120),
-            );
-          },
         );
       },
     );
   }
 
-  Widget buildUserInfoSection() {
+  Widget buildUserInfoSection(ProfileCupit cubit) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
       child: Row(
         children: [
           Column(
             children: [
-              Image.asset(UserDM.currentUser!.imgPath!, height: 118),
+              Image.asset(UserDM.currentUser?.imgPath ?? AppAssets.popCorn, height: 118),
               const SizedBox(height: 16),
-              Text(UserDM.currentUser!.name!, style: AppTextStyles.whiteHeader700mediam20),
+              Text(
+                UserDM.currentUser?.name ?? "User",
+                style: AppTextStyles.whiteHeader700mediam20,
+              ),
             ],
           ),
           const Spacer(),
-          StreamBuilder<QuerySnapshot<Movie2>>(
-            stream: MyDatabase.getWatchListStream(),
-            builder: (context, snapshot) {
-              int count = snapshot.hasData ? snapshot.data!.docs.length : 0;
-              return buildCounter(count.toString(), "Watch List");
-            },
-          ),          const Spacer(),
-          StreamBuilder<QuerySnapshot<Movie2>>(
-            stream: MyDatabase.getHistoryStream(),
-            builder: (context, snapshot) {
-              int count = snapshot.hasData ? snapshot.data!.docs.length : 0;
-              return buildCounter(count.toString(), "History");
-            },
-          ),        ],
+          buildCounter(cubit.watchList.length.toString(), "Watch List"),
+          const Spacer(),
+          buildCounter(cubit.historyList.length.toString(), "History"),
+        ],
       ),
     );
   }
+
 
   Widget buildCounter(String count, String label) {
     return Column(
@@ -216,32 +142,73 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget buildActionButtons(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          flex: 2,
-          child: AppButton(
-            onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) =>  EditProfile())),
-            text: "Edit Profile",
-            color1: AppColors.yellow, color2: AppColors.yellow, TextColor: AppColors.black,
-          ),
-        ),
-        Expanded(
-          flex: 1,
-          child: AppButton(
 
-              onPressed: () async {
-                await MyDatabase.logout();
-                if (context.mounted) {
-                  Navigator.push(context, MaterialPageRoute(builder: (context) =>  LoginScreen()));
-                }
-                },
-            text: "Exit",
-            color1: AppColors.red, color2: AppColors.red, TextColor: AppColors.white,
-            Icons: const Icon(Icons.exit_to_app_outlined, color: AppColors.white, size: 20),
+  Widget buildActionButtons(BuildContext context, ProfileCupit cubit) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: AppButton(
+              onPressed: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EditProfile()),
+              ),
+              text: "Edit Profile",
+              color1: AppColors.yellow,
+              color2: AppColors.yellow,
+              TextColor: AppColors.black,
+            ),
           ),
-        ),
+          const SizedBox(width: 10),
+          Expanded(
+            flex: 1,
+            child: AppButton(
+              onPressed: () async {
+                await cubit.logout();
+                if (context.mounted) {
+                  Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => LoginScreen()),
+                        (route) => false,
+                  );
+                }
+              },
+              text: "Exit",
+              color1: AppColors.red,
+              color2: AppColors.red,
+              TextColor: AppColors.white,
+              Icons: const Icon(Icons.exit_to_app_outlined, color: AppColors.white, size: 20),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+  TabBar buildTabBar() {
+    return const TabBar(
+      dividerColor: Colors.transparent,
+      indicatorSize: TabBarIndicatorSize.tab,
+      indicatorColor: AppColors.yellow,
+      labelColor: AppColors.white,
+      unselectedLabelColor: AppColors.white,
+      tabs: [
+        Tab(icon: Icon(Icons.table_rows_rounded), text: "Watch List"),
+        Tab(icon: Icon(Icons.folder), text: "History"),
+      ],
+    );
+  }
+
+  Widget buildEmptyListState() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Image.asset(AppAssets.popCorn),
+        const SizedBox(height: 16),
+        Text("No Movies Added Yet", style: AppTextStyles.whiteHeader700mediam20),
       ],
     );
   }
